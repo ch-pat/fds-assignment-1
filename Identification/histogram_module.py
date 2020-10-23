@@ -158,7 +158,6 @@ def dxdy_hist(img_gray, num_bins):
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
     hists = hists / sum(hists)
-    print(sum(hists))
     return hists
 
 

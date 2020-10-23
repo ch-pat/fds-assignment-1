@@ -8,18 +8,24 @@ import math
 # Check that the distance range in [0,1]
 
 def dist_intersect(x,y):
-    pass
-    #... (your code here)
-
+    somma = sum(x)
+    x = [i/somma for i in x]
+    somma = sum(y)
+    y = [i/somma for i in y]
+    minima = np.minimum(x, y)
+    intersection = np.true_divide(np.sum(minima), np.sum(y))
+    return intersection
 
 
 # Compute the L2 distance between x and y histograms
 # Check that the distance range in [0,sqrt(2)]
 
 def dist_l2(x,y):
-    pass    
-    #... (your code here)
+    #This is the l2 norm by definition
+    #return sum((x - y)**2)**(1/2)
+    # TODO ask the prof about the L2 norm formula
 
+    return sum((x - y)**2)
 
 
 # Compute chi2 distance between x and y
@@ -27,9 +33,10 @@ def dist_l2(x,y):
 # Add a minimum score to each cell of the histograms (e.g. 1) to avoid division by 0
 
 def dist_chi2(x,y):
-    pass
-    #... (your code here)
-
+    # Adding minimum score
+    x = x + 1  # adds 1 to each element of x
+    y = y + 1
+    return sum( ((x - y)**2) / (x + y) )
 
 
 def get_dist_by_name(x, y, dist_name):
