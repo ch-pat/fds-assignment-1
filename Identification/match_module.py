@@ -80,16 +80,19 @@ def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
     _, D = find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
 
     for i in range(len(query_images)):
-        best_matches += [sorted(D[i, :])[:5]]
+        best_matches_row = []
+        for dist in sorted(D[:, i])[:5]:
+            best_matches_row += [D[:, i].tolist().index(dist)]
+        best_matches += [best_matches_row]
     
+    # TODO: scorre nel modo giusto, ma il plot fa schifo, capire come funziona plot
     for i in range(len(query_images)):
-
         plt.subplot(len(query_images), num_nearest+1, 1)
         plt.imshow(np.array(Image.open(query_images[i])).astype('double'))
         for j in range(num_nearest):
             plt.subplot(len(query_images), num_nearest+1, j+2)
             print(best_matches)
             print(best_matches[i][j])
-            plt.imshow(np.array(Image.open(model_images[int(best_matches[i][j])])).astype('double'))
+            plt.imshow(np.array(Image.open(model_images[best_matches[i][j]])).astype('double'))
 
     plt.show()
