@@ -33,10 +33,17 @@ def find_best_match(model_images, query_images, dist_type, hist_type, num_bins):
     
     D = np.zeros((len(model_images), len(query_images)))
     
+    for i in range(len(query_hists)):
+        for j in range(len(model_hists)):
+            D[j, i] = dist_module.get_dist_by_name(query_hists[i], model_hists[j], dist_type)
+
+    best_match = [-1 for i in range(len(query_hists))]
     
-    #... (your code here)
+    for i in range(len(query_hists)):
+        result = np.where(D[:, i] == np.amin(D[:, i]))
+        best_match[i] = result[0][0]
 
-
+    best_match = np.array(best_match)
     return best_match, D
 
 
@@ -44,10 +51,14 @@ def find_best_match(model_images, query_images, dist_type, hist_type, num_bins):
 def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
     
     image_hist = []
+    images = [np.array(Image.open(img)).astype('double') for img in image_list]
 
-    # Compute hisgoram for each image and add it at the bottom of image_hist
+    # Compute histogram for each image and add it at the bottom of image_hist
+    if hist_isgray:
+        images = [rgb2gray(img).astype('double') for img in images]
 
-    #... (your code here)
+    for image in images:    
+        image_hist += [histogram_module.get_hist_by_name(image, num_bins, hist_type)]
 
     return image_hist
 
@@ -65,5 +76,20 @@ def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
 
     num_nearest = 5  # show the top-5 neighbors
     
-    #... (your code here)
+    best_matches = []
+    _, D = find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
 
+    for i in range(len(query_images)):
+        best_matches += [sorted(D[i, :])[:5]]
+    
+    for i in range(len(query_images)):
+
+        plt.subplot(len(query_images), num_nearest+1, 1)
+        plt.imshow(np.array(Image.open(query_images[i])).astype('double'))
+        for j in range(num_nearest):
+            plt.subplot(len(query_images), num_nearest+1, j+2)
+            print(best_matches)
+            print(best_matches[i][j])
+            plt.imshow(np.array(Image.open(model_images[int(best_matches[i][j])])).astype('double'))
+
+    plt.show()
