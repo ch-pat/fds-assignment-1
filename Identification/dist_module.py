@@ -8,13 +8,9 @@ import math
 # Check that the distance range in [0,1]
 
 def dist_intersect(x,y):
-    somma = sum(x)
-    x = [i/somma for i in x]
-    somma = sum(y)
-    y = [i/somma for i in y]
     minima = np.minimum(x, y)
     intersection = np.true_divide(np.sum(minima), np.sum(y))
-    return intersection
+    return 1 - intersection
 
 
 # Compute the L2 distance between x and y histograms
