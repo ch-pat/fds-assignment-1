@@ -56,9 +56,15 @@ def compute_histograms(image_list, hist_type, hist_isgray, num_bins):
     # Compute histogram for each image and add it at the bottom of image_hist
     if hist_isgray:
         images = [rgb2gray(img).astype('double') for img in images]
-
-    for image in images:    
-        image_hist += [histogram_module.get_hist_by_name(image, num_bins, hist_type)]
+        for image in images:
+            if hist_type == "grayvalue":
+                hist, _ =  histogram_module.get_hist_by_name(image, num_bins, hist_type)
+            if hist_type == "dxdy":
+                hist =  histogram_module.get_hist_by_name(image, num_bins, hist_type)
+            image_hist += [hist]
+    else:
+        for image in images:    
+            image_hist += [histogram_module.get_hist_by_name(image, num_bins, hist_type)]
 
     return image_hist
 
@@ -86,13 +92,18 @@ def show_neighbors(model_images, query_images, dist_type, hist_type, num_bins):
         best_matches += [best_matches_row]
     
     # TODO: scorre nel modo giusto, ma il plot fa schifo, capire come funziona plot
+    index_counter = 0
     for i in range(len(query_images)):
-        plt.subplot(len(query_images), num_nearest+1, 1)
-        plt.imshow(np.array(Image.open(query_images[i])).astype('double'))
+        plt.subplot(len(query_images), num_nearest+1, index_counter+i+1)
+        plt.imshow(np.array(Image.open(query_images[i])))
         for j in range(num_nearest):
-            plt.subplot(len(query_images), num_nearest+1, j+2)
-            print(best_matches)
-            print(best_matches[i][j])
-            plt.imshow(np.array(Image.open(model_images[best_matches[i][j]])).astype('double'))
+            index_counter += 1
+            plt.subplot(len(query_images), num_nearest+1, index_counter+i+1)
+            plt.imshow(np.array(Image.open(model_images[best_matches[i][j]])))
 
+    # plt.subplot(1, num_nearest+1, 1)
+    # plt.imshow(np.array(Image.open(query_images[0])))
+    # for i in range(num_nearest):
+    #         plt.subplot(1, num_nearest+1, i+2)
+    #         plt.imshow(np.array(Image.open(model_images[best_matches[0][i]])))
     plt.show()

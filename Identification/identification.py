@@ -169,8 +169,8 @@ with open('query.txt') as fp:
 query_images = [x.strip() for x in query_images] 
 
 dist_type = 'intersect';
-hist_type = 'rg';
-num_bins = 30;
+hist_type = 'rgb';
+num_bins = 10
 
 [best_match, D] = match_module.find_best_match(model_images, query_images, dist_type, hist_type, num_bins)
 
