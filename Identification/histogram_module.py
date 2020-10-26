@@ -23,15 +23,15 @@ def normalized_hist(img_gray, num_bins):
     assert img_gray.dtype == 'float', 'incorrect image type'
 
     bins = np.array([255/num_bins * i for i in range(num_bins+1)])
-    hists = []
-    for i in range(1, len(bins)):
-        current_bin = 0
-        for x in img_gray.reshape(img_gray.size):
-            if x <= bins[i] and x >= bins[i-1]:
-                current_bin += 1
-        hists += [current_bin]
-    hists = np.array(hists) / img_gray.size
+    hists = np.array([0 for i in range(num_bins)])
+
+    pixels_to_bins = np.floor(img_gray / (255/num_bins)).astype('int').reshape(img_gray.size)
     
+    for i in range(len(pixels_to_bins)):
+        hists[pixels_to_bins[i]] += 1
+    
+    hists = hists / pixels_to_bins.size
+
     return hists, bins
 
 
