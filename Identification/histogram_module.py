@@ -51,24 +51,16 @@ def rgb_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
     
-    bins = [255/num_bins * i for i in range(num_bins+1)]
-
     #Define a 3D histogram  with "num_bins^3" number of entries
     hists = np.zeros((num_bins, num_bins, num_bins))
 
     rgb_channels = img_color_double.reshape(img_color_double.shape[0]*img_color_double.shape[1], img_color_double.shape[2])
-
+    pixels_to_bins = np.floor(rgb_channels / (255/num_bins)).astype('int')
+    
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
-        r, g, b = rgb_channels[i]
-        for x in range(1, len(bins)):
-            if r <= bins[x] and r >= bins[x-1]:
-                bin_r = x - 1
-            if g <= bins[x] and g >= bins[x-1]:
-                bin_g = x - 1
-            if b <= bins[x] and b >= bins[x-1]:
-                bin_b = x - 1
+        bin_r, bin_g, bin_b = pixels_to_bins[i]
         hists[bin_r, bin_g, bin_b] += 1
 
     #Normalize the histogram such that its integral (sum) is equal 1
@@ -95,22 +87,16 @@ def rg_hist(img_color_double, num_bins):
     assert len(img_color_double.shape) == 3, 'image dimension mismatch'
     assert img_color_double.dtype == 'float', 'incorrect image type'
 
-    bins = [255/num_bins * i for i in range(num_bins+1)]
-
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
 
     rgb_channels = img_color_double.reshape(img_color_double.shape[0]*img_color_double.shape[1], img_color_double.shape[2])
+    pixels_to_bins = np.floor(rgb_channels / (255/num_bins)).astype('int')
 
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
-        r, g, _ = rgb_channels[i]
-        for x in range(1, len(bins)):
-            if r <= bins[x] and r >= bins[x-1]:
-                bin_r = x - 1
-            if g <= bins[x] and g >= bins[x-1]:
-                bin_g = x - 1
+        bin_r, bin_g, _ = pixels_to_bins[i]
         hists[bin_r, bin_g] += 1
 
     #Normalize the histogram such that its integral (sum) is equal 1
