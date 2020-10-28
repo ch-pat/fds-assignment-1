@@ -27,6 +27,9 @@ def normalized_hist(img_gray, num_bins):
 
     pixels_to_bins = np.floor(img_gray / (255/num_bins)).astype('int').reshape(img_gray.size)
     
+    # prevents exceeding array index when img_gray[i]=255 (never happens in tests anyway)
+    pixels_to_bins[pixels_to_bins == num_bins] = num_bins - 1
+
     for i in range(len(pixels_to_bins)):
         hists[pixels_to_bins[i]] += 1
     
@@ -56,6 +59,11 @@ def rgb_hist(img_color_double, num_bins):
 
     rgb_channels = img_color_double.reshape(img_color_double.shape[0]*img_color_double.shape[1], img_color_double.shape[2])
     pixels_to_bins = np.floor(rgb_channels / (255/num_bins)).astype('int')
+    
+    # prevents exceeding array index when img_color_double[i] contains a 255 (never happens in tests anyway)
+    pixels_to_bins[:, 0][pixels_to_bins[:, 0] == num_bins] = num_bins - 1
+    pixels_to_bins[:, 1][pixels_to_bins[:, 1] == num_bins] = num_bins - 1
+    pixels_to_bins[:, 2][pixels_to_bins[:, 2] == num_bins] = num_bins - 1
     
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
@@ -93,6 +101,10 @@ def rg_hist(img_color_double, num_bins):
     rgb_channels = img_color_double.reshape(img_color_double.shape[0]*img_color_double.shape[1], img_color_double.shape[2])
     pixels_to_bins = np.floor(rgb_channels / (255/num_bins)).astype('int')
 
+    # prevents exceeding array index when img_color_double[i] contains a 255 (never happens in tests anyway)
+    pixels_to_bins[:, 0][pixels_to_bins[:, 0] == num_bins] = num_bins - 1
+    pixels_to_bins[:, 1][pixels_to_bins[:, 1] == num_bins] = num_bins - 1
+
     # Loop for each pixel i in the image 
     for i in range(img_color_double.shape[0]*img_color_double.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
@@ -122,24 +134,29 @@ def dxdy_hist(img_gray, num_bins):
     assert len(img_gray.shape) == 2, 'image dimension mismatch'
     assert img_gray.dtype == 'float', 'incorrect image type'
 
-    bins = [(12/num_bins * i) - 6 for i in range(num_bins+1)]
-
     sigma = 3.0
     imgDx, imgDy = gauss_module.gaussderiv(img_gray, sigma)
     imgDx = imgDx.reshape(imgDx.size)
     imgDy = imgDy.reshape(imgDx.size)
 
+    # Set out of range values within the expected range; 
+    # a value of 6 would be quantized just above the last bin, therefore we set it to the next closest thing
+    # (falls into the correct bin anyway)
+    imgDx[imgDx >= 6] = 5.99999999
+    imgDx[imgDx < -6] = -6.0
+    imgDy[imgDy >= 6] = 5.99999999
+    imgDy[imgDy < -6] = -6.0
+    
+    # Turn pixel values to bin indices
+    Dx_bins = ( (imgDx + 6) / (12/num_bins) ).astype('int')
+    Dy_bins = ( (imgDy + 6) / (12/num_bins) ).astype('int')
+    
     #Define a 2D histogram  with "num_bins^2" number of entries
     hists = np.zeros((num_bins, num_bins))
 
     for i in range(img_gray.shape[0]*img_gray.shape[1]):
         # Increment the histogram bin which corresponds to the R,G,B value of the pixel i
-        for x in range(1, len(bins)):
-            if imgDx[i] <= bins[x] and imgDx[i] >= bins[x-1]:
-                bin_Dx = x - 1
-            if imgDy[i] <= bins[x] and imgDy[i] >= bins[x-1]:
-                bin_Dy = x - 1
-        hists[bin_Dx, bin_Dy] += 1
+        hists[Dx_bins[i], Dy_bins[i]] += 1
 
     #Return the histogram as a 1D vector
     hists = hists.reshape(hists.size)
