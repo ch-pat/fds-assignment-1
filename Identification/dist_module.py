@@ -17,10 +17,6 @@ def dist_intersect(x,y):
 # Check that the distance range in [0,sqrt(2)]
 
 def dist_l2(x,y):
-    #This is the l2 norm by definition
-    #return sum((x - y)**2)**(1/2)
-    # TODO ask the prof about the L2 norm formula
-
     return sum((x - y)**2)
 
 
@@ -29,10 +25,7 @@ def dist_l2(x,y):
 # Add a minimum score to each cell of the histograms (e.g. 1) to avoid division by 0
 
 def dist_chi2(x,y):
-    # Adding minimum score
-    x = x + 1  # adds 1 to each element of x
-    y = y + 1
-    return sum( ((x - y)**2) / (x + y) )
+    return sum( ((x - y)**2) / (x + y + 1) )
 
 
 def get_dist_by_name(x, y, dist_name):
