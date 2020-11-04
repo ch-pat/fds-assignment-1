@@ -207,18 +207,18 @@ num_bins = 20;
 
 plt.figure(8)
 rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l2'], 'rg', num_bins, ['r', 'g', 'b'])
-#plt.title('RG histograms')
-#plt.show()
+plt.title('RG histograms')
+plt.show()
 
 
 plt.figure(9)
 rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l2'], 'rgb', num_bins // 2, ['r', 'g', 'b'])
-#plt.title('RGB histograms')
-#plt.show()
+plt.title('RGB histograms')
+plt.show()
 
 
 plt.figure(10)
 rpc_module.compare_dist_rpc(model_images, query_images, ['chi2', 'intersect', 'l2'], 'dxdy', num_bins, ['r', 'g', 'b'])
-#plt.title('dx/dy histograms')
-#plt.show()
+plt.title('dx/dy histograms')
+plt.show()
 

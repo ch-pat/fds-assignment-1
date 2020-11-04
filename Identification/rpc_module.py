@@ -65,7 +65,6 @@ def compare_dist_rpc(model_images, query_images, dist_types, hist_type, num_bins
     plt.axis([0, 1, 0, 1]);
     plt.xlabel('1 - precision');
     plt.ylabel('recall');
-    plt.show()  # Aggiunto qui, perchè quello in identification.py fa riferimento a un "plt" diverso
 
     # legend(dist_types, 'Location', 'Best')
     
